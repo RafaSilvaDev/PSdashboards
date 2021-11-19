@@ -38,7 +38,7 @@ export default {
         theme: 'saga-blue',
         ripple: true,
         components: [
-            'Button', 'Sidebar', 'Avatar', 'TieredMenu'
+            'Button', 'Sidebar', 'Avatar', 'TieredMenu', 'Charts'
         ],
     },
 
@@ -54,7 +54,7 @@ export default {
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
         '@nuxtjs/google-fonts',
-        'primevue/nuxt',
+        'primevue/nuxt'
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios
