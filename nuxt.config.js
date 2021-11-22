@@ -38,7 +38,7 @@ export default {
         theme: 'saga-blue',
         ripple: true,
         components: [
-            'Button', 'Sidebar', 'Avatar', 'TieredMenu', 'Charts'
+            'Button', 'Sidebar', 'Avatar', 'TieredMenu', 'Chart'
         ],
     },
 
