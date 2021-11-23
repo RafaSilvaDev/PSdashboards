@@ -1,33 +1,35 @@
 <template>
-  <div class="charts">
-    <div class="donuts">
-      <div class="chart">
-        <p>Total de formulários preenchidos</p>
-        <Chart
-          class="donutchart"
-          type="doughnut"
-          :data="donutData"
-          :options="chartOptions"
-        />
-      </div>
-      <div class="chart">
-        <p>Satisfação Total</p>
-        <Chart
-          class="piechart"
-          type="pie"
-          :data="pieData"
-          :options="chartOptions"
-        />
-      </div>
-    </div>
-    <div class="chart">
-        <p>Importância de cada tópico pelos alunos</p>
-      <Chart
-        class="barchart"
-        type="bar"
-        :data="stackedData"
-        :options="stackedOptions"
+  <div class="container">
+    <div class="dropdown">
+      <Dropdown
+        class="drop"
+        v-model="dropdownData.selectedCity"
+        :options="dropdownData.turmas"
+        optionLabel="name"
+        placeholder="Selecione uma turma aqui"
       />
+    </div>
+    <div class="charts">
+      <div class="donuts">
+        <div class="chart num">
+          <p>Total de formulários preenchidos</p>
+          <h1
+            v-tooltip.right="
+              'Esta porcentagem demonstra o total de formulários preenchidos. '
+            "
+          >
+            {{ totalForms }}
+          </h1>
+        </div>
+        <div class="chart piechart">
+          <p>Satisfação Total</p>
+          <Chart type="pie" :data="pieData" :options="chartOptions" />
+        </div>
+      </div>
+      <div class="chart barchart">
+        <p>Importância de cada tópico pelos alunos</p>
+        <Chart type="bar" :data="stackedData" :options="stackedOptions" />
+      </div>
     </div>
   </div>
 </template>
@@ -36,6 +38,19 @@
 export default {
   data() {
     return {
+      totalForms: "75%",
+
+      dropdownData: {
+        selectedCity: null,
+        turmas: [
+          { name: "1DES" },
+          { name: "2DES" },
+          { name: "1MEC" },
+          { name: "2MEC" },
+          { name: "1MAD" },
+        ],
+      },
+
       stackedData: {
         labels: [
           "Q1",
@@ -124,7 +139,7 @@ export default {
         labels: ["Ótimo", "Bom", "Regular", "Ruim"],
         datasets: [
           {
-            data: [300, 50, 100,75],
+            data: [300, 50, 100, 75],
             backgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
             hoverBackgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
           },
@@ -144,49 +159,103 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+* {
+  box-sizing: border-box;
+}
+.container {
+  padding: 80px;
+}
+.dropdown {
+  margin-bottom: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  .drop {
+    max-width: 600px;
+    box-shadow: none;
+    border-color: none;
+  }
+  .drop:hover {
+    border-color: #c22a1f !important;
+  }
+}
 .charts {
   width: 100%;
-  height: 95%;
-  padding: 60px;
+  height: 100%;
   display: flex;
   flex-direction: row;
-  align-items: center;
-  justify-content: center;
   box-sizing: border-box;
 
   .chart {
     padding: 20px;
     border-radius: 15px;
     box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    p {
+      font-size: 1.8rem;
+    }
+  }
+  .num {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+      font-size: 4.5rem;
+      font-weight: 400;
+      color: #c22a1f;
+      text-align: center;
+      padding: 50px;
+    }
+    h1:hover {
+      cursor: default;
+    }
   }
 
   .donuts {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     width: 25%;
     margin-right: 20px;
 
-    .donutchart {
-      margin-bottom: 20px;
+    .piechart {
+      padding: 10px;
+      margin-top: 20px;
     }
+  }
+
+  .barchart {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1100px) {
   .charts {
     flex-direction: column;
     width: 100%;
+    padding: 40px;
 
     .donuts {
       flex-direction: row;
       margin: 0 0 20px 0;
       width: 100%;
-
-      .donutchart {
-        margin: 0 20px 0 0;
+      .num {
+        h1 {
+          height: 100%;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          font-size: 7rem;
+        }
       }
+      .piechart {
+        margin: 0 0 0 20px;
+      }
+    }
+    .barchart {
+      width: 100%;
     }
   }
 }
