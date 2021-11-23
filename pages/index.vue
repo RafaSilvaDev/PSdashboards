@@ -13,20 +13,35 @@
       <div class="donuts">
         <div class="chart num">
           <p>Total de formulários preenchidos</p>
-          <h1
+          <h1>{{ totalForms }}</h1>
+          <i
+            class="pi pi-info-circle"
+            style="font-size: 2rem; text-align: right; color: #c22a1f"
             v-tooltip.right="
-              'Esta porcentagem demonstra o total de formulários preenchidos. '
+              'Esta porcentagem demonstra o total de formulários preenchidos.'
             "
-          >
-            {{ totalForms }}
-          </h1>
+          ></i>
         </div>
         <div class="chart piechart">
           <p>Satisfação Total</p>
           <Chart type="pie" :data="pieData" :options="chartOptions" />
+          <i
+            class="pi pi-info-circle"
+            style="font-size: 2rem; text-align: right; color: #c22a1f"
+            v-tooltip.right="
+              'Este gráfico demonstra a satisfação geral dos alunos com os itens avaliados.'
+            "
+          ></i>
         </div>
       </div>
       <div class="chart barchart">
+        <i
+            class="pi pi-info-circle"
+            style="font-size: 2rem; text-align: right; color: #c22a1f"
+            v-tooltip.top="
+              'Este gráfico demonstra a importância considerada por todos os alunos em relação aos itens avaliados.'
+            "
+          ></i>
         <p>Importância de cada tópico pelos alunos</p>
         <Chart type="bar" :data="stackedData" :options="stackedOptions" />
       </div>
