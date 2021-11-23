@@ -29,7 +29,7 @@
             class="pi pi-info-circle"
             style="font-size: 2rem; text-align: right; color: #c22a1f"
             v-tooltip.right="
-              'Este gráfico demonstra a satisfação geral dos alunos com os itens avaliados.'
+              'Este gráfico demonstra a satisfação geral dos alunos com os itens avaliados. '
             "
           ></i>
         </div>
