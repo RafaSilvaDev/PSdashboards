@@ -54,7 +54,7 @@ export default {
         // https://go.nuxtjs.dev/axios
         '@nuxtjs/axios',
         '@nuxtjs/google-fonts',
-        'primevue/nuxt'
+        'primevue/nuxt',
     ],
 
     // Axios module configuration: https://go.nuxtjs.dev/config-axios

@@ -8,6 +8,7 @@
         optionLabel="name"
         placeholder="Selecione uma turma aqui"
       />
+      <button type="button" value="imprimir" v-on:click="gerarPDF()"></button>
     </div>
     <div class="charts">
       <div class="donuts">
@@ -22,7 +23,7 @@
             "
           ></i>
         </div>
-        <div class="chart piechart">
+        <div class="chart piechart" id="dados">
           <p>Satisfação Total</p>
           <Chart type="pie" :data="pieData" :options="chartOptions" />
           <i
@@ -34,18 +35,44 @@
           ></i>
         </div>
       </div>
-      <div class="chart barchart">
+      <div class="chart barchart" id="dados2">
         <i
-            class="pi pi-info-circle"
-            style="font-size: 2rem; text-align: right; color: #c22a1f"
-            v-tooltip.top="
-              'Este gráfico demonstra a importância considerada por todos os alunos em relação aos itens avaliados.'
-            "
-          ></i>
+          class="pi pi-info-circle"
+          style="font-size: 2rem; text-align: right; color: #c22a1f"
+          v-tooltip.top="
+            'Este gráfico demonstra a importância considerada por todos os alunos em relação aos itens avaliados.'
+          "
+        ></i>
         <p>Importância de cada tópico pelos alunos</p>
         <Chart type="bar" :data="stackedData" :options="stackedOptions" />
       </div>
     </div>
+    <!-- <div>
+      <table>
+        <thead>
+          <tr>
+            <th>Nome</th>
+            <th>Data de Nascimento</th>
+            <th>Sexo</th>
+            <th>Turma</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>dado 0</td>
+            <td>dado 1</td>
+            <td>dado 3</td>
+            <td>dado 4</td>
+          </tr>
+          <tr>
+            <td>dado 5</td>
+            <td>dado 6</td>
+            <td>dado 7</td>
+            <td>dado 8</td>
+          </tr>
+        </tbody>
+      </table>
+    </div> -->
   </div>
 </template>
 
@@ -53,6 +80,8 @@
 export default {
   data() {
     return {
+      imagePDF: null,
+
       totalForms: "75%",
 
       dropdownData: {
@@ -170,15 +199,67 @@ export default {
       },
     };
   },
+  methods: {
+    // gerarCanvas() {
+    //   Html2canvas(document.querySelector("#dados")).then((canvas) => {
+    //     // document.body.appendChild(canvas);
+    //     this.imagePDF = canvas.toDataURL("image/png");
+    //     document.write('<img src="' + this.imagePDF + '" style="width: 100%; height: 100%;" />');
+    //   });
+    //   Html2canvas(document.querySelector("#dados2")).then((canvas) => {
+    //     // document.body.appendChild(canvas);
+    //   });
+    // },
+
+    gerarPDF() {
+      // this.gerarCanvas();
+
+      let dados = document.getElementById("dados").innerHTML;
+
+      let doc = window.open("", "", "width=800, height=600");
+      doc.document.write(
+        "<html><head><title>Gráficos documentados</title></head>"
+      );
+      doc.document.write('<body style="display: flex; flex-direction: row; padding: 100px">');
+      doc.document.write("<div>");
+      doc.document.write("<h3>Satisfação total dos alunos: </h3>");
+      doc.document.write('<p> Ótimo: '+this.pieData.datasets[0].data[0]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Bom: '+this.pieData.datasets[0].data[1]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Regular: '+this.pieData.datasets[0].data[2]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Ruim: '+this.pieData.datasets[0].data[3]+' alunos.</p>');
+      doc.document.write('</div>');
+      // ------------------ segunda div do template ------------------
+      // Adiciona uma tabela aqui dps
+      doc.document.write("<div>");
+      doc.document.write("<h1>Satisfação total dos alunos: </h1>");
+      doc.document.write('<p> Ótimo: '+this.pieData.datasets[0].data[0]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Bom: '+this.pieData.datasets[0].data[1]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Regular: '+this.pieData.datasets[0].data[2]+' alunos.</p>');
+      doc.document.write('<br />');
+      doc.document.write('<p> Ruim: '+this.pieData.datasets[0].data[3]+' alunos.</p>');
+      doc.document.write('</div>');
+      doc.document.write("</body></html>");
+      doc.document.close();
+      doc.print();
+    },
+  },
 };
 </script>
 
 <style lang="scss" scoped>
-* {
-  box-sizing: border-box;
+html,
+body {
+  margin: 0;
+  padding: 0;
 }
 .container {
-  padding: 80px;
+  padding: 120px;
+  box-sizing: border-box;
 }
 .dropdown {
   margin-bottom: 40px;
@@ -247,6 +328,9 @@ export default {
 }
 
 @media (max-width: 1100px) {
+  .container {
+    padding: 50px;
+  }
   .charts {
     flex-direction: column;
     width: 100%;
