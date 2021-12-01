@@ -9,6 +9,7 @@
         placeholder="Selecione uma turma aqui"
       />
       <a
+        v-if="dropdownData.selectedTurma"
         class="btn-print"
         type="button"
         value="imprimir"
