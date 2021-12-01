@@ -3,12 +3,25 @@
     <div class="dropdown">
       <Dropdown
         class="drop"
-        v-model="dropdownData.selectedCity"
+        v-model="dropdownData.selectedTurma"
         :options="dropdownData.turmas"
         optionLabel="name"
         placeholder="Selecione uma turma aqui"
       />
-      <button type="button" value="imprimir" v-on:click="gerarPDF()"></button>
+      <a
+        class="btn-print"
+        type="button"
+        value="imprimir"
+        v-on:click="gerarPDF()"
+      >
+        <i
+          class="pi pi-print"
+          style="font-size: 2.5rem; text-align: right; color: #c22a1f"
+          v-tooltip.right="
+            'Experimene baixar um PDF com os dados da turma selecionada.'
+          "
+        ></i>
+      </a>
     </div>
     <div class="charts">
       <div class="donuts">
@@ -47,32 +60,6 @@
         <Chart type="bar" :data="stackedData" :options="stackedOptions" />
       </div>
     </div>
-    <!-- <div>
-      <table>
-        <thead>
-          <tr>
-            <th>Nome</th>
-            <th>Data de Nascimento</th>
-            <th>Sexo</th>
-            <th>Turma</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>dado 0</td>
-            <td>dado 1</td>
-            <td>dado 3</td>
-            <td>dado 4</td>
-          </tr>
-          <tr>
-            <td>dado 5</td>
-            <td>dado 6</td>
-            <td>dado 7</td>
-            <td>dado 8</td>
-          </tr>
-        </tbody>
-      </table>
-    </div> -->
   </div>
 </template>
 
@@ -85,7 +72,7 @@ export default {
       totalForms: "75%",
 
       dropdownData: {
-        selectedCity: null,
+        selectedTurma: null,
         turmas: [
           { name: "1DES" },
           { name: "2DES" },
@@ -167,18 +154,6 @@ export default {
         },
       },
 
-      donutData: {
-        labels: ["A", "B", "C"],
-        datasets: [
-          {
-            label: "# of Votes",
-            data: [300, 50, 100],
-            backgroundColor: ["#c22a1f", "#881c16", "#ffccc9"],
-            hoverBackgroundColor: ["#c22a1f", "#881c16", "#ffccc9"],
-          },
-        ],
-      },
-
       pieData: {
         labels: ["Ótimo", "Bom", "Regular", "Ruim"],
         datasets: [
@@ -200,50 +175,263 @@ export default {
     };
   },
   methods: {
-    // gerarCanvas() {
-    //   Html2canvas(document.querySelector("#dados")).then((canvas) => {
-    //     // document.body.appendChild(canvas);
-    //     this.imagePDF = canvas.toDataURL("image/png");
-    //     document.write('<img src="' + this.imagePDF + '" style="width: 100%; height: 100%;" />');
-    //   });
-    //   Html2canvas(document.querySelector("#dados2")).then((canvas) => {
-    //     // document.body.appendChild(canvas);
-    //   });
-    // },
-
     gerarPDF() {
-      // this.gerarCanvas();
-
       let dados = document.getElementById("dados").innerHTML;
 
       let doc = window.open("", "", "width=800, height=600");
-      doc.document.write(
-        "<html><head><title>Gráficos documentados</title></head>"
-      );
-      doc.document.write('<body style="display: flex; flex-direction: row; padding: 100px">');
-      doc.document.write("<div>");
-      doc.document.write("<h3>Satisfação total dos alunos: </h3>");
-      doc.document.write('<p> Ótimo: '+this.pieData.datasets[0].data[0]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Bom: '+this.pieData.datasets[0].data[1]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Regular: '+this.pieData.datasets[0].data[2]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Ruim: '+this.pieData.datasets[0].data[3]+' alunos.</p>');
-      doc.document.write('</div>');
-      // ------------------ segunda div do template ------------------
-      // Adiciona uma tabela aqui dps
-      doc.document.write("<div>");
-      doc.document.write("<h1>Satisfação total dos alunos: </h1>");
-      doc.document.write('<p> Ótimo: '+this.pieData.datasets[0].data[0]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Bom: '+this.pieData.datasets[0].data[1]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Regular: '+this.pieData.datasets[0].data[2]+' alunos.</p>');
-      doc.document.write('<br />');
-      doc.document.write('<p> Ruim: '+this.pieData.datasets[0].data[3]+' alunos.</p>');
-      doc.document.write('</div>');
-      doc.document.write("</body></html>");
+      let html =
+        `
+      <html><head><title>Gráficos documentados - ` +
+        JSON.stringify(this.dropdownData.selectedTurma.name) +
+        ` </title></head>
+        <body style="font-family: 'Roboto', sans-serif;display: flex; flex-direction: row; justify-content: space-between">
+          <div style="margin-top: 60px">
+            <div style="border: 1px solid #c22a1f; border-radius: 10px;">
+              <div style="background-color: #c22a1f;color: #fff;padding: 5px;border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                <h3>Satisfação total dos alunos:</h3>
+              </div>
+              <div style="padding: 10px;">
+                <p>` +
+        this.pieData.labels[0] +
+        `: ` +
+        this.pieData.datasets[0].data[0] +
+        ` alunos.</p>
+                <hr />
+                <p>` +
+        this.pieData.labels[1] +
+        `: ` +
+        this.pieData.datasets[0].data[1] +
+        ` alunos.</p>
+                <hr />
+                <p>` +
+        this.pieData.labels[2] +
+        `: ` +
+        this.pieData.datasets[0].data[2] +
+        ` alunos.</p>
+                <hr />
+                <p>` +
+        this.pieData.labels[3] +
+        `: ` +
+        this.pieData.datasets[0].data[3] +
+        ` alunos.</p>
+              </div>
+            </div>
+            <div style="margin-top: 30px; border: 1px solid #c22a1f; border-radius: 10px; text-align: center;">
+              <div style="background-color: #c22a1f;color: #fff;padding: 5px;border-top-left-radius: 10px;border-top-right-radius: 10px;">
+                <h2>Total de formulários preenchidos:</h2>
+              </div>
+              <p style="font-size: 2rem; font-weight: 700; color: #c22a1f;">` +
+        this.totalForms +
+        `</p>
+            </div>
+          </div>
+          <div>
+            <h3>Tabela de importância de cada tópico: </h3>
+            <table style="width: 100%; display: flex; flex-direction: column;">
+              <thead style="padding: 5px; background-color: #c22a1f; color: #fff; border-top-left-radius: 10px; border-top-right-radius: 10px;">
+                <tr style="display: flex; justify-content: space-between; border: 1px solid #c22a1f;">
+                  <th>Tópico</th>
+                  <th>` +
+        this.stackedData.datasets[0].label +
+        `</th>
+                  <th>` +
+        this.stackedData.datasets[1].label +
+        `</th>
+                  <th>` +
+        this.stackedData.datasets[2].label +
+        `</th>
+                </tr>
+              </thead>
+              <tbody style="display: flex; flex-direction: column; justify-content: space-between; border: 2px solid #c22a1f; padding: 5px;">
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[0] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[0] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[0] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[0] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[1] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[1] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[1] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[1] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[2] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[2] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[2] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[2] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[3] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[3] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[3] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[3] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[4] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[4] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[4] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[4] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[5] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[5] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[5] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[5] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[6] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[6] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[6] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[6] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[7] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[7] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[7] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[7] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[8] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[8] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[8] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[8] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[9] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[9] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[9] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[9] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[10] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[10] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[10] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[10] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px; border-bottom: 1px solid #c22a1f">
+                  <td><b>` +
+        this.stackedData.labels[11] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[11] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[11] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[11] +
+        `</td>
+                </tr>
+                <tr style="display: flex; justify-content: space-between; padding: 5px;">
+                  <td><b>` +
+        this.stackedData.labels[12] +
+        `</b></td>
+                  <td>` +
+        this.stackedData.datasets[0].data[12] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[1].data[12] +
+        `</td>
+                  <td>` +
+        this.stackedData.datasets[2].data[12] +
+        `</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </body>
+      </html>
+      `;
+      doc.document.write(html);
       doc.document.close();
       doc.print();
     },
@@ -265,7 +453,13 @@ body {
   margin-bottom: 40px;
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
+  a{
+    width: auto;
+    i:hover{
+      cursor: pointer;
+    }
+  }
   .drop {
     max-width: 600px;
     box-shadow: none;
