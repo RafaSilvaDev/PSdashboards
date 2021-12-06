@@ -3,13 +3,14 @@
     <div class="dropdown">
       <Dropdown
         class="drop"
-        v-model="dropdownData.selectedTurma"
-        :options="dropdownData.turmas"
+        v-model="selectedTurma"
+        :options="turmas"
+        v-on:change="updateChart()"
         optionLabel="name"
         placeholder="Selecione uma turma aqui"
       />
       <a
-        v-if="dropdownData.selectedTurma"
+        v-if="selectedTurma"
         class="btn-print"
         type="button"
         value="imprimir"
@@ -65,23 +66,15 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
+      turmas: [],
       imagePDF: null,
 
+      selectedTurma: null,
       totalForms: "75%",
-
-      dropdownData: {
-        selectedTurma: null,
-        turmas: [
-          { name: "1DES" },
-          { name: "2DES" },
-          { name: "1MEC" },
-          { name: "2MEC" },
-          { name: "1MAD" },
-        ],
-      },
 
       stackedData: {
         labels: [
@@ -176,6 +169,16 @@ export default {
     };
   },
   methods: {
+    dropdownData: async function() {
+      //  coletando turmas
+       await axios.get("http://127.0.0.1:8000/api/v1/Turma/").then((dados) =>{
+         dados.data.forEach(async(element) => {
+           await this.turmas.push({
+             name: element.nome
+          });
+          });
+        })
+      },
     gerarPDF() {
       let dados = document.getElementById("dados").innerHTML;
 
@@ -183,7 +186,7 @@ export default {
       let html =
         `
       <html><head><title>Gráficos documentados - ` +
-        JSON.stringify(this.dropdownData.selectedTurma.name) +
+        JSON.stringify(this.selectedTurma.name) +
         ` </title></head>
         <body style="font-family: 'Roboto', sans-serif;display: flex; flex-direction: row; justify-content: space-between">
           <div style="margin-top: 60px">
@@ -436,8 +439,28 @@ export default {
       doc.document.close();
       doc.print();
     },
+    updateChart(){
+      if(this.selectedTurma){
+       alert("Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name));
+      /*
+        axios
+          .get("/api/turmas/" + selectedTurma.id + "/forms")
+          .then(response => {
+            this.totalForms = response.data.length;
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      */
+      }
+    }
   },
+  async created(){
+    this.dropdownData()
+    this.turmas = []
+  }
 };
+
 </script>
 
 <style lang="scss" scoped>
