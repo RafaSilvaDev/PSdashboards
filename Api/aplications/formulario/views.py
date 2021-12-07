@@ -11,11 +11,11 @@ class FormularioApi(viewsets.ModelViewSet):
 
 class QtdFormularios(viewsets.ModelViewSet):
     queryset = Formulario.objects.all()
-    '''
+    
     queryset = Formulario.objects.filter(
-        id__aluno__icontains = 1
+        id_turma__nome__icontains = '1DES'
     )
-    '''
+    
     serializer_class = Formularioserializer
 
 class AlunoApi(viewsets.ModelViewSet):

@@ -442,16 +442,6 @@ export default {
     updateChart(){
       if(this.selectedTurma){
        alert("Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name));
-      /*
-        axios
-          .get("/api/turmas/" + selectedTurma.id + "/forms")
-          .then(response => {
-            this.totalForms = response.data.length;
-          })
-          .catch(error => {
-            console.log(error);
-          });
-      */
       }
     }
   },
