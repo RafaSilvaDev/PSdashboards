@@ -169,16 +169,16 @@ export default {
     };
   },
   methods: {
-    dropdownData: async function() {
+    dropdownData: async function () {
       //  coletando turmas
-       await axios.get("http://127.0.0.1:8000/api/v1/Turma/").then((dados) =>{
-         dados.data.forEach(async(element) => {
-           await this.turmas.push({
-             name: element.nome
+      await axios.get("http://127.0.0.1:8000/api/v1/Turma/").then((dados) => {
+        dados.data.forEach(async (element) => {
+          await this.turmas.push({
+            name: element.nome,
           });
-          });
-        })
-      },
+        });
+      });
+    },
     gerarPDF() {
       let dados = document.getElementById("dados").innerHTML;
 
@@ -439,18 +439,29 @@ export default {
       doc.document.close();
       doc.print();
     },
-    updateChart(){
-      if(this.selectedTurma){
-       alert("Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name));
-      }
-    }
-  },
-  async created(){
-    this.dropdownData()
-    this.turmas = []
-  }
-};
+    updateChart: async function () {
+      if (this.selectedTurma) {
+        alert(
+          "Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name)
+        );
+        this.stackedData.datasets[0].data = [];
 
+        await axios
+          .get("http://127.0.0.1:8000/api/v1/ImportAlta/")
+          .then((dados) => {
+            dados.data.forEach(async (element) => {
+              this.stackedData.datasets[0].data.push();
+            });
+            // console.log(Object.keys(dados.data).length);
+          });
+      }
+    },
+  },
+  async created() {
+    this.dropdownData();
+    this.turmas = [];
+  },
+};
 </script>
 
 <style lang="scss" scoped>
@@ -468,9 +479,9 @@ body {
   width: 100%;
   display: flex;
   justify-content: space-between;
-  a{
+  a {
     width: auto;
-    i:hover{
+    i:hover {
       cursor: pointer;
     }
   }

@@ -18,4 +18,4 @@ class Formulario(models.Model):
     
       
     def __str__(self):
-        return str('%s, %s, %s' % (self.id_aluno, self.id_turma, self.id_turma.nome))
+        return str('%s, %s, %s, %s' % (self.id_aluno, self.id_turma.nome, self.id_importancia.desc, self.id_satisfacao.desc))
