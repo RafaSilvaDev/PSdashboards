@@ -447,12 +447,11 @@ export default {
         this.stackedData.datasets[0].data = [];
 
         await axios
-          .get("http://127.0.0.1:8000/api/v1/ImportAlta/")
+          .get("http://127.0.0.1:8000/api/v1/Forms/")
           .then((dados) => {
-            dados.data.forEach(async (element) => {
-              this.stackedData.datasets[0].data.push();
-            });
             // console.log(Object.keys(dados.data).length);
+            // adicione um campo de total de alunos em uma turma, para o retorno da porcentagem.
+            this.totalForms = (Object.keys(dados.data).length)/13;
           });
       }
     },
