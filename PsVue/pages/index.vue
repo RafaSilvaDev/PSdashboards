@@ -5,7 +5,7 @@
         class="drop"
         v-model="selectedTurma"
         :options="turmas"
-        v-on:change="updateChart()"
+        v-on:change="updateCharts()"
         optionLabel="name"
         placeholder="Selecione uma turma aqui"
       />
@@ -71,10 +71,11 @@ export default {
   data() {
     return {
       turmas: [],
+      importancias1: [],
       imagePDF: null,
 
       selectedTurma: null,
-      totalForms: "75%",
+      totalForms: "0%",
 
       stackedData: {
         labels: [
@@ -152,7 +153,7 @@ export default {
         labels: ["Ótimo", "Bom", "Regular", "Ruim"],
         datasets: [
           {
-            data: [300, 50, 100, 75],
+            data: [0, 0, 0, 0],
             backgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
             hoverBackgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
           },
@@ -175,6 +176,8 @@ export default {
         dados.data.forEach(async (element) => {
           await this.turmas.push({
             name: element.nome,
+            alunos: element.totalAlunos,
+            id: element.id,
           });
         });
       });
@@ -439,20 +442,88 @@ export default {
       doc.document.close();
       doc.print();
     },
-    updateChart: async function () {
+    updateCharts: async function () {
       if (this.selectedTurma) {
         alert(
           "Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name)
         );
+
         this.stackedData.datasets[0].data = [];
+        await axios.get("http://127.0.0.1:8000/api/v1/Forms/").then((dados) => {
+          // calculando a porcentagem de formularios preenchidos
+          let qtdFormsTurmaSelected = 0
+          dados.data.forEach((form) => {
+            if (form.id_turma == this.selectedTurma.id) {
+              qtdFormsTurmaSelected++
+            }
+          });
+          this.totalForms =
+            parseInt(
+              ((qtdFormsTurmaSelected / 13) * 100) /
+                this.selectedTurma["alunos"]
+            ) + "%";
+        });
 
         await axios
-          .get("http://127.0.0.1:8000/api/v1/Forms/")
+          .get("http://127.0.0.1:8000/api/v1/ImportAlta/")
           .then((dados) => {
-            // console.log(Object.keys(dados.data).length);
-            // adicione um campo de total de alunos em uma turma, para o retorno da porcentagem.
-            this.totalForms = (Object.keys(dados.data).length)/13;
+            dados.data.forEach(async (element, i) => {
+              // retornando formularios com importancia alta e id da pergunta == 1
+              if (element.id_pergunta == 1) {
+                await this.importancias1.push({
+                  id: element.id_pergunta,
+                });
+              }
+            });
           });
+
+        this.pieData.datasets[0].data = [];
+        const newPieChart = {
+          labels: ["Ótimo", "Bom", "Regular", "Ruim"],
+          datasets: [
+            {
+              data: [0, 0, 0, 0],
+              backgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
+              hoverBackgroundColor: [
+                "#c22a1f",
+                "#881c16",
+                "#ffccc9",
+                "#ff9a94",
+              ],
+            },
+          ],
+        };
+        await axios
+          .get("http://127.0.0.1:8000/api/v1/SatsOtima/")
+          .then((dados) => {
+            // GET de satisfacoes ótimas da turma
+            newPieChart.datasets[0].data[0] = Object.keys(dados.data).length;
+            // console.log(this.pieData.datasets[0].data[0]);
+          });
+
+        await axios
+          .get("http://127.0.0.1:8000/api/v1/SatsBoa/")
+          .then((dados) => {
+            // GET de satisfacoes boas da turma
+            newPieChart.datasets[0].data[1] = Object.keys(dados.data).length;
+            // console.log(this.pieData.datasets[0].data[1]);
+          });
+
+        await axios
+          .get("http://127.0.0.1:8000/api/v1/SatsRegular/")
+          .then((dados) => {
+            // GET de satisfacoes regulares da turma
+            newPieChart.datasets[0].data[2] = Object.keys(dados.data).length;
+            // console.log(this.pieData.datasets[0].data[2]);
+          });
+
+        await axios
+          .get("http://127.0.0.1:8000/api/v1/SatsRuim/")
+          .then((dados) => {
+            // GET de satisfacoes ruins da turma
+            newPieChart.datasets[0].data[3] = Object.keys(dados.data).length;
+          });
+        this.pieData = newPieChart;
       }
     },
   },

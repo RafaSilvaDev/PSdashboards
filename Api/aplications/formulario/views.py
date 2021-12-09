@@ -43,68 +43,72 @@ class EnvioApi(viewsets.ModelViewSet):
 
 # ===================== Views consumidas pelo Nuxt =====================
 # Retornando as perguntas de um formulario por turma específica
-class QtdFormularios(viewsets.ModelViewSet):
+class QtdFormularios(viewsets.ModelViewSet):    
     queryset = Formulario.objects.all()
-    
-    queryset = Formulario.objects.filter(
-        id_turma__nome__icontains = turma
-    )
-    
     serializer_class = Formularioserializer
 
 # Retornando as importancias altas por turma, do formulário
 class QtdImportanciaAlta(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_importancia__desc__icontains = 'Alta', id_turma__nome__icontains = turma
+        id_importancia__desc__icontains = 'Alta',
+        id_turma__nome__icontains = turma,
     )
-    serializer_class = Importanciaserializer
+    serializer_class = Formularioserializer
 
 # Retornando as importancias medias por turma, do formulário
 class QtdImportanciaMedia(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_importancia__desc__icontains = 'Media', id_turma__nome__icontains = turma
+        id_importancia__desc__icontains = 'Media',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Importanciaserializer
+    serializer_class = Formularioserializer
 
 # Retornando as importancias baixas por turma, do formulário
 class QtdImportanciaBaixa(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_importancia__desc__icontains = 'Baixa', id_turma__nome__icontains = turma
+        id_importancia__desc__icontains = 'Baixa',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Importanciaserializer
+    serializer_class = Formularioserializer
+
 
 
 # Retornando as satisfacoes ÓTIMAS por turma, do formulário
 class QtdSatisfacaoOtima(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Ótimo', id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Ótimo',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Satisfacaoserializer
+    serializer_class = Formularioserializer
 
 # Retornando as satisfacoes BOAS por turma, do formulário
 class QtdSatisfacaoBoa(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Bom', id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Bom',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Satisfacaoserializer
+    serializer_class = Formularioserializer
 
 # Retornando as satisfacoes REGULARES por turma, do formulário
 class QtdSatisfacaoRegular(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Regular', id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Regular',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Satisfacaoserializer
+    serializer_class = Formularioserializer
 
 # Retornando as satisfacoes RUINS por turma, do formulário
 class QtdSatisfacaoRuim(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Ruim', id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Ruim',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Satisfacaoserializer
+    serializer_class = Formularioserializer
 
 # Retornando as satisfacoes NA por turma, do formulário
 class QtdSatisfacaoNA(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Não se aplica', id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Não se aplica',
+        id_turma__nome__icontains = turma
     )
-    serializer_class = Satisfacaoserializer
+    serializer_class = Formularioserializer
