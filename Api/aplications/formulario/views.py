@@ -76,8 +76,7 @@ class QtdImportanciaBaixa(viewsets.ModelViewSet):
 # Retornando as satisfacoes ÓTIMAS por turma, do formulário
 class QtdSatisfacaoOtima(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
-        id_satisfacao__desc__icontains = 'Ótimo',
-        id_turma__nome__icontains = turma
+        id_satisfacao__desc__icontains = 'Ótimo'
     )
     serializer_class = Formularioserializer
 
@@ -85,7 +84,6 @@ class QtdSatisfacaoOtima(viewsets.ModelViewSet):
 class QtdSatisfacaoBoa(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
         id_satisfacao__desc__icontains = 'Bom',
-        id_turma__nome__icontains = turma
     )
     serializer_class = Formularioserializer
 
@@ -93,7 +91,6 @@ class QtdSatisfacaoBoa(viewsets.ModelViewSet):
 class QtdSatisfacaoRegular(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
         id_satisfacao__desc__icontains = 'Regular',
-        id_turma__nome__icontains = turma
     )
     serializer_class = Formularioserializer
 
@@ -101,7 +98,6 @@ class QtdSatisfacaoRegular(viewsets.ModelViewSet):
 class QtdSatisfacaoRuim(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
         id_satisfacao__desc__icontains = 'Ruim',
-        id_turma__nome__icontains = turma
     )
     serializer_class = Formularioserializer
 
@@ -109,6 +105,5 @@ class QtdSatisfacaoRuim(viewsets.ModelViewSet):
 class QtdSatisfacaoNA(viewsets.ModelViewSet):
     queryset = Formulario.objects.filter(
         id_satisfacao__desc__icontains = 'Não se aplica',
-        id_turma__nome__icontains = turma
     )
     serializer_class = Formularioserializer

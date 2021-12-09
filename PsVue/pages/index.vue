@@ -71,8 +71,13 @@ export default {
   data() {
     return {
       turmas: [],
-      importancias1: [],
+      importancias: [],
       imagePDF: null,
+      formsTurma: 0,
+      satsOtima: 0,
+      satsBoa: 0,
+      satsRegular: 0,
+      satsRuim: 0,
 
       selectedTurma: null,
       totalForms: "0%",
@@ -183,8 +188,6 @@ export default {
       });
     },
     gerarPDF() {
-      let dados = document.getElementById("dados").innerHTML;
-
       let doc = window.open("", "", "width=800, height=600");
       let html =
         `
@@ -443,25 +446,52 @@ export default {
       doc.print();
     },
     updateCharts: async function () {
+      
       if (this.selectedTurma) {
-        alert(
-          "Você selecionou a turma: " + JSON.stringify(this.selectedTurma.name)
-        );
+          const newPieChart = {
+            labels: ["Ótimo", "Bom", "Regular", "Ruim"],
+            datasets: [
+              {
+                data: [0, 0, 0, 0],
+                backgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
+                hoverBackgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
+              },
+            ],
+          };
 
         this.stackedData.datasets[0].data = [];
         await axios.get("http://127.0.0.1:8000/api/v1/Forms/").then((dados) => {
-          // calculando a porcentagem de formularios preenchidos
-          let qtdFormsTurmaSelected = 0
+          this.formsTurma = 0;
+          this.satsOtima = 0;
+          this.satsBoa = 0;
+          this.satsRegular = 0;
+          this.satsRuim = 0;
+
+          // GET dos formulários preenchidos
           dados.data.forEach((form) => {
-            if (form.id_turma == this.selectedTurma.id) {
-              qtdFormsTurmaSelected++
+            if (form.id_turma == this.selectedTurma["id"]) {
+              this.formsTurma = this.formsTurma + 1;
+
+              switch(form.id_satisfacao) {
+                case 1: this.satsOtima = this.satsOtima + 1; break;
+                case 2: this.satsBoa = this.satsBoa + 1; break;
+                case 3: this.satsRegular = this.satsRegular + 1; break;
+                case 4: this.satsRuim = this.satsRuim + 1; break;
+              }
             }
           });
+
+          newPieChart.datasets[0].data[0] = this.satsOtima;
+          newPieChart.datasets[0].data[1] = this.satsBoa;
+          newPieChart.datasets[0].data[2] = this.satsRegular;
+          newPieChart.datasets[0].data[3] = this.satsRuim;
+
           this.totalForms =
             parseInt(
-              ((qtdFormsTurmaSelected / 13) * 100) /
-                this.selectedTurma["alunos"]
+              ((this.formsTurma / 13) * 100) / this.selectedTurma["alunos"]
             ) + "%";
+
+          this.pieData = newPieChart;
         });
 
         await axios
@@ -470,60 +500,12 @@ export default {
             dados.data.forEach(async (element, i) => {
               // retornando formularios com importancia alta e id da pergunta == 1
               if (element.id_pergunta == 1) {
-                await this.importancias1.push({
+                await this.importancias.push({
                   id: element.id_pergunta,
                 });
               }
             });
           });
-
-        this.pieData.datasets[0].data = [];
-        const newPieChart = {
-          labels: ["Ótimo", "Bom", "Regular", "Ruim"],
-          datasets: [
-            {
-              data: [0, 0, 0, 0],
-              backgroundColor: ["#c22a1f", "#881c16", "#ffccc9", "#ff9a94"],
-              hoverBackgroundColor: [
-                "#c22a1f",
-                "#881c16",
-                "#ffccc9",
-                "#ff9a94",
-              ],
-            },
-          ],
-        };
-        await axios
-          .get("http://127.0.0.1:8000/api/v1/SatsOtima/")
-          .then((dados) => {
-            // GET de satisfacoes ótimas da turma
-            newPieChart.datasets[0].data[0] = Object.keys(dados.data).length;
-            // console.log(this.pieData.datasets[0].data[0]);
-          });
-
-        await axios
-          .get("http://127.0.0.1:8000/api/v1/SatsBoa/")
-          .then((dados) => {
-            // GET de satisfacoes boas da turma
-            newPieChart.datasets[0].data[1] = Object.keys(dados.data).length;
-            // console.log(this.pieData.datasets[0].data[1]);
-          });
-
-        await axios
-          .get("http://127.0.0.1:8000/api/v1/SatsRegular/")
-          .then((dados) => {
-            // GET de satisfacoes regulares da turma
-            newPieChart.datasets[0].data[2] = Object.keys(dados.data).length;
-            // console.log(this.pieData.datasets[0].data[2]);
-          });
-
-        await axios
-          .get("http://127.0.0.1:8000/api/v1/SatsRuim/")
-          .then((dados) => {
-            // GET de satisfacoes ruins da turma
-            newPieChart.datasets[0].data[3] = Object.keys(dados.data).length;
-          });
-        this.pieData = newPieChart;
       }
     },
   },
